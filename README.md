@@ -1,61 +1,81 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+// ...existing code...
+# G-Scores — Tra cứu điểm thi THPT 2024
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Ứng dụng Laravel nhỏ dùng để tra cứu và báo cáo điểm thi THPT 2024.
 
-## About Laravel
+## Mô tả ngắn
+- Người dùng có thể tra cứu điểm theo số báo danh (SBD).
+- Hiển thị chi tiết điểm từng môn và tổng điểm theo các khối (A, B, C).
+- Trang báo cáo thống kê số lượng học sinh theo mức điểm cho từng môn.
+- Trang Top 10 học sinh khối A (Toán - Lý - Hóa).
+- Dữ liệu được import từ file CSV thông qua seeder.
+## Công nghệ sử dụng
+** Backend
+- Framework: Dự án được xây dựng trên Laravel, sử dụng các tính năng MVC (Model-View-Controller) để quản lý logic ứng dụng, cơ sở dữ liệu (qua Eloquent ORM), định tuyến (Routing), và xử lý xác thực (Authentication).
+Ngôn ngữ: PHP.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+** View Layer
+Engine: Giao diện người dùng được xây dựng bằng Blade Templating Engine.
+## Những thành phần chính
+- Routes: [routes/web.php](routes/web.php) — các route chính của ứng dụng.
+- Controllers:
+  - [`App\Http\Controllers\StudentController`](app/Http/Controllers/StudentController.php) — tra cứu SBD.
+  - [`App\Http\Controllers\ReportController`](app/Http/Controllers/ReportController.php) — thống kê theo môn.
+  - [`App\Http\Controllers\TopController`](app/Http/Controllers/TopController.php) — Top 10 khối A.
+- Model:
+  - [`App\Models\Student`](app/Models/Student.php) — model học sinh.
+- Migrations:
+  - [database/migrations/2025_10_20_015128_create_students_table.php](database/migrations/2025_10_20_015128_create_students_table.php)
+- Seeder:
+  - [`Database\Seeders\StudentSeeder`](database/seeders/StudentSeeder.php) — import dữ liệu từ CSV.
+- Views:
+  - [resources/views/scores.blade.php](resources/views/scores.blade.php) — trang tra cứu và hiển thị kết quả.
+  - [resources/views/report.blade.php](resources/views/report.blade.php) — trang báo cáo (Chart.js).
+  - [resources/views/top_group_a.blade.php](resources/views/top_group_a.blade.php) — Top 10 khối A.
+- Entry point web: [public/index.php](public/index.php)
+- Docker: [Dockerfile](Dockerfile) (cấu hình image PHP + Apache)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Cài đặt nhanh (local)
+1. Sao chép repo, chuyển tới thư mục dự án.
+2. Tạo file env:
+   - cp .env.example .env
+   - chỉnh các biến môi trường cần thiết (DB, APP_URL,...)
+   Hãy sửa lại phần database config trong file .env như sau (giả sử bạn dùng XAMPP):
+  DB_CONNECTION=mysql
+  DB_HOST=127.0.0.1
+  DB_PORT=3306
+  DB_DATABASE=diemthithpt
+  DB_USERNAME=root
+  DB_PASSWORD=
+3. Cài PHP dependencies:
+   - composer install
+4. Cài Node (frontend):
+   - npm install
+   - npm run dev (hoặc npm run build)
+5. Tạo DB và migrate + seed:
+  Mở http://localhost/phpmyadmin -> Nhấn tab Databases -> Nhập tên
+** Nhập các lệnh sau ở teminal thư mục gốc của dự án
+  php artisan migrate
+  php artisan migrate:fresh
+  php artisan db:seed --class=StudentSeeder
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+6. Chạy server:
+   - php artisan serve
+   - hoặc khởi động Docker theo Dockerfile / docker-compose.yml
 
-## Learning Laravel
+## Dữ liệu mẫu
+- Dữ liệu điểm được import bởi [`Database\Seeders\StudentSeeder`](database/seeders/StudentSeeder.php). File CSV mặc định: `database/seeders/data/diem_thi_thpt_2024.csv`.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Một vài route hữu ích
+- GET /  — trang tra cứu ([routes/web.php](routes/web.php))
+- POST /search — tìm theo SBD (xử lý bởi [`App\Http\Controllers\StudentController`](app/Http/Controllers/StudentController.php))
+- GET /report — báo cáo thống kê ([`App\Http\Controllers\ReportController`](app/Http/Controllers/ReportController.php))
+- GET /top-group-a — Top 10 khối A ([`App\Http\Controllers\TopController`](app/Http/Controllers/TopController.php))
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Tên miền
+https://tracuudiemthi2024.onrender.com
+Hiện tại chỉ xem được giao diện và chỉ mới deploy được Laravel chưa deploy được MySQL, em đang dùng render nhưng renden không hỗ trợ mysql em chưa kịp làm deploy mysql
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Video Demo
+https://drive.google.com/file/d/17EP8KvhS6JwbuLrkZrU7FyPptF06pmgH/view?usp=drive_link
