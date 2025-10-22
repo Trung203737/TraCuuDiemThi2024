@@ -73,9 +73,8 @@ Engine: Giao diện người dùng được xây dựng bằng Blade Templating 
 - GET /report — báo cáo thống kê ([`App\Http\Controllers\ReportController`](app/Http/Controllers/ReportController.php))
 - GET /top-group-a — Top 10 khối A ([`App\Http\Controllers\TopController`](app/Http/Controllers/TopController.php))
 
-## Tên miền
+## Tên miền đã triển khai sử dụng render + EWS 
 https://tracuudiemthi2024.onrender.com
-Hiện tại chỉ xem được giao diện và chỉ mới deploy được Laravel chưa deploy được MySQL, em đang dùng render nhưng renden không hỗ trợ mysql em chưa kịp làm deploy mysql
 
 ## Video Demo
 https://drive.google.com/file/d/17EP8KvhS6JwbuLrkZrU7FyPptF06pmgH/view?usp=drive_link
