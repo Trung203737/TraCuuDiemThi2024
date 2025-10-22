@@ -74,6 +74,8 @@ Engine: Giao diện người dùng được xây dựng bằng Blade Templating 
 - GET /top-group-a — Top 10 khối A ([`App\Http\Controllers\TopController`](app/Http/Controllers/TopController.php))
 
 ## Tên miền đã triển khai sử dụng render + EWS 
+triển khai backend sử dụng render.com
+triển khai database sử dụng ews(EC2)
 https://tracuudiemthi2024.onrender.com
 
 ## Video Demo
